@@ -87,8 +87,7 @@ const styles = StyleSheet.create({
     color: "#fff",
   },
   icon: {
-    marginLeft: "auto",
-    paddingRight: 10,
+    margin: 10,
   },
   footer: {
     flexDirection: "row",
