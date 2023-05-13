@@ -115,7 +115,7 @@ export default function HomeScreen({ navigation }) {
                 color: "#2C413C",
               },
             ]}
-            onPress={() => navigation.navigate("Camera")}
+            onPress={handleLogout}
           />
           <Text style={styles.listText}>Logout</Text>
         </View>
