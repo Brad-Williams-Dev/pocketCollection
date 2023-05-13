@@ -7,13 +7,39 @@ import {
   TouchableOpacity,
 } from "react-native";
 import * as Font from "expo-font";
-import LinearGradient from "react-native-linear-gradient";
+import { Input, Button } from "react-native-elements";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import React, { useState, useEffect } from "react";
 
 const SignInScreen = ({ navigation }) => {
   const [isFontLoaded, setIsFontLoaded] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+
+  const [value, setValue] = React.useState({
+    email: "",
+    password: "",
+    error: "",
+  });
+
+  const auth = getAuth();
+
+  async function signIn() {
+    if (value.email === "" || value.password === "") {
+      setValue({
+        ...value,
+        error: "Email and password are mandatory.",
+      });
+      return;
+    }
+
+    try {
+      await signInWithEmailAndPassword(auth, value.email, value.password);
+    } catch (error) {
+      setValue({
+        ...value,
+        error: error.message,
+      });
+    }
+  }
 
   const loadFont = async () => {
     await Font.loadAsync({
@@ -25,11 +51,18 @@ const SignInScreen = ({ navigation }) => {
 
   useEffect(() => {
     loadFont();
-  }, []);
 
-  const signIn = () => {
-    // Add your sign in logic here
-  };
+    if (value.error !== "") {
+      const timer = setTimeout(() => {
+        setValue({
+          ...value,
+          error: "",
+        });
+      }, 3000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [value.error]);
 
   return (
     <View style={styles.container}>
@@ -48,25 +81,34 @@ const SignInScreen = ({ navigation }) => {
           uri: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/6.png",
         }}
       />
-
-      <TextInput
-        style={styles.input}
-        onChangeText={setEmail}
-        value={email}
+      {!!value.error && (
+        <View style={styles.error}>
+          <Text style={styles.errorText}>Error: Wrong Email or Password</Text>
+        </View>
+      )}
+      <Input
         placeholder="Email"
+        containerStyle={styles.input}
+        value={value.email}
+        onChangeText={(text) => setValue({ ...value, email: text })}
         keyboardType="email-address"
-        textContentType="emailAddress"
+        autoCapitalize="none"
+        secureTextEntry={false}
       />
-      <TextInput
-        style={styles.input}
-        onChangeText={setPassword}
-        value={password}
+
+      <Input
         placeholder="Password"
-        secureTextEntry
+        containerStyle={styles.input}
+        value={value.password}
+        onChangeText={(text) => setValue({ ...value, password: text })}
+        secureTextEntry={true}
       />
-      <TouchableOpacity style={styles.button} onPress={signIn}>
-        <Text style={styles.buttonText}>Sign In</Text>
-      </TouchableOpacity>
+
+      <Button
+        title="Sign In"
+        buttonStyle={styles.buttonText}
+        onPress={signIn}
+      />
       <TouchableOpacity onPress={() => navigation.navigate("SignUp")}>
         <Text style={styles.signUpText}>Don't have an account? Sign Up</Text>
       </TouchableOpacity>

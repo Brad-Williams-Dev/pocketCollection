@@ -1,14 +1,12 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-import SignUpScreen from './screens/SignUpScreen';
-import SignInScreen from './screens/SignInScreen';
+import React from 'react';
+import './config/firebase';
+import { StyleSheet, Text, View, } from 'react-native';
+import RootNavigation from './navigation';
 
 export default function App() {
   return (
     <View style={styles.container}>
-      {/* <SignInScreen /> */}
-      <SignUpScreen />
-      <StatusBar style="auto" />
+      <RootNavigation />
     </View>
   );
 }
@@ -16,8 +14,5 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+  }
 });

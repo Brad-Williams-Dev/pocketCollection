@@ -6,20 +6,32 @@ import {
   TextInput,
   TouchableOpacity,
 } from "react-native";
+import { Input, Button } from "react-native-elements";
 import * as Font from "expo-font";
-import LinearGradient from "react-native-linear-gradient";
 import React, { useState, useEffect } from "react";
+
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  updateProfile,
+} from "firebase/auth";
+import { getDatabase, ref, set } from "firebase/database";
+
+const auth = getAuth();
+const database = getDatabase();
 
 const SignUpScreen = ({ navigation }) => {
   const [isFontLoaded, setIsFontLoaded] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
+  const [value, setValue] = React.useState({
+    email: "",
+    password: "",
+    user_name: "",
+    error: "",
+  });
 
   const loadFont = async () => {
     await Font.loadAsync({
       "pokemon-font": require("../assets/fonts/pokemon-font.ttf"),
-      // Replace './assets/fonts/pokemon-font.ttf' with the actual path to your font file
     });
     setIsFontLoaded(true);
   };
@@ -28,9 +40,39 @@ const SignUpScreen = ({ navigation }) => {
     loadFont();
   }, []);
 
-  const signUp = () => {
-    // Add your sign in logic here
-  };
+  async function signUp() {
+    if (value.email === "" || value.password === "" || value.user_name === "") {
+      setValue({
+        ...value,
+        error: "Email, password, username are mandatory.",
+      });
+      return;
+    }
+
+    try {
+      // Create new user account
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        value.email,
+        value.password
+      );
+
+      // Update value object with new user properties
+      setValue({
+        ...value,
+        error: "",
+        displayName: userCredential.user.displayName,
+        uid: userCredential.user.uid,
+      });
+
+      navigation.navigate("SignIn");
+    } catch (error) {
+      setValue({
+        ...value,
+        error: error.message,
+      });
+    }
+  }
 
   return (
     <View style={styles.container}>
@@ -49,30 +91,32 @@ const SignUpScreen = ({ navigation }) => {
           uri: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/6.png",
         }}
       />
-      <TextInput
-        style={styles.input}
-        onChangeText={setName}
-        value={name}
-        placeholder="Name"
+      {!!value.error && (
+        <View style={styles.error}>
+          <Text>{value.error}</Text>
+        </View>
+      )}
+      <Input
+        placeholder="User Name"
+        containerStyle={styles.input}
+        value={value.user_name}
+        onChangeText={(text) => setValue({ ...value, user_name: text })}
       />
-      <TextInput
-        style={styles.input}
-        onChangeText={setEmail}
-        value={email}
+      <Input
         placeholder="Email"
-        keyboardType="email-address"
-        textContentType="emailAddress"
+        containerStyle={styles.input}
+        value={value.email}
+        onChangeText={(text) => setValue({ ...value, email: text })}
       />
-      <TextInput
-        style={styles.input}
-        onChangeText={setPassword}
-        value={password}
+
+      <Input
         placeholder="Password"
-        secureTextEntry
+        containerStyle={styles.input}
+        value={value.password}
+        onChangeText={(text) => setValue({ ...value, password: text })}
+        secureTextEntry={true}
       />
-      <TouchableOpacity style={styles.button} onPress={signUp}>
-        <Text style={styles.buttonText}>Sign Up</Text>
-      </TouchableOpacity>
+      <Button title="Sign up" buttonStyle={styles.control} onPress={signUp} />
       <TouchableOpacity onPress={() => navigation.navigate("SignIn")}>
         <Text style={styles.signUpText}>Already have an account? Login</Text>
       </TouchableOpacity>
