@@ -29,8 +29,11 @@
     "lodash": "latest",
     "react": "18.2.0",
     "react-native": "0.71.3",
+    "react-native-camera": "^4.2.1",
     "react-native-drawer": "^2.5.1",
-    "react-native-elements": "^3.4.3"
+    "react-native-elements": "^3.4.3",
+    "expo-camera": "~13.2.1",
+    "expo-permissions": "~14.1.1"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"

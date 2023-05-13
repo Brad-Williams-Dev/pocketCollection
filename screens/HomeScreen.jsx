@@ -43,34 +43,27 @@ export default function HomeScreen({ navigation }) {
         <Text style={styles.headerTitle}>PokeScan</Text>
       </View>
       <View style={styles.footer}>
-        <TouchableOpacity onPress={() => navigation.navigate("Search")}>
-          <Icon
-            name="search"
-            size={32}
-            style={[styles.icon, { color: "#fff" }]}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate("Camera")}>
-          <Icon
-            name="camera"
-            size={32}
-            style={[styles.icon, { color: "#fff" }]}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
-          <Icon
-            name="user"
-            size={32}
-            style={[styles.icon, { color: "#fff" }]}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={handleLogout}>
-          <Icon
-            name="sign-out"
-            size={32}
-            style={[styles.icon, { color: "#fff" }]}
-          />
-        </TouchableOpacity>
+        <Icon
+          name="search"
+          size={32}
+          style={[styles.icon, { color: "#fff" }]}
+        />
+
+        <Icon
+          name="camera"
+          size={32}
+          style={[styles.icon, { color: "#fff" }]}
+          onPress={() => navigation.navigate("Camera")}
+        />
+
+        <Icon name="user" size={32} style={[styles.icon, { color: "#fff" }]} />
+
+        <Icon
+          name="sign-out"
+          size={32}
+          style={[styles.icon, { color: "#fff" }]}
+          onPress={handleLogout}
+        />
       </View>
     </SafeAreaView>
   );
