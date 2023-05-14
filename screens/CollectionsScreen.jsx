@@ -1,13 +1,25 @@
-import { View, Text, Image, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  ScrollView,
+  FlatList,
+  useWindowDimensions,
+  Modal,
+  TouchableOpacity,
+} from "react-native";
 import * as Font from "expo-font";
 import { Input, Button } from "react-native-elements";
 import React, { useEffect, useState } from "react";
-import { getDatabase, ref, set, onValue } from "firebase/database";
+import { getDatabase, ref, set, onValue, remove } from "firebase/database";
 import { database, auth } from "../config/firebase";
 
 const CollectionsScreen = () => {
   const [isFontLoaded, setIsFontLoaded] = useState(false);
   const [collection, setCollection] = useState([]);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedCard, setSelectedCard] = useState(null);
 
   const loadFont = async () => {
     await Font.loadAsync({
@@ -43,6 +55,49 @@ const CollectionsScreen = () => {
     };
   }, []);
 
+  const windowWidth = useWindowDimensions().width; // Use useWindowDimensions hook to get the window width
+
+  const renderCard = ({ item }) => (
+    <View style={styles.collection}>
+      <View style={[styles.imageContainer, { width: windowWidth / 2 - 20 }]}>
+        <TouchableOpacity
+          onPress={() => {
+            setSelectedCard(item);
+            setModalVisible(true);
+          }}
+        >
+          <Image
+            source={{ uri: item.imageUrl }}
+            resizeMode="contain"
+            style={styles.image}
+          />
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+
+  const removeCard = () => {
+    if (selectedCard) {
+      const cardId = selectedCard.id;
+      const userId = auth.currentUser.uid;
+
+      // Remove the card from the collection state
+      setCollection((prevCollection) =>
+        prevCollection.filter((card) => card.id !== cardId)
+      );
+
+      // Remove the card from the Firebase database
+      const cardRef = ref(
+        getDatabase(),
+        `users/${userId}/collection/${cardId}`
+      );
+      remove(cardRef);
+
+      // Close the modal
+      setModalVisible(false);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Text
@@ -54,16 +109,35 @@ const CollectionsScreen = () => {
       >
         Collections
       </Text>
-
-      {Object.keys(collection).map((key) => (
-        <View style={styles.collection} key={key}>
-          <Image
-            source={{ uri: collection[key].imageUrl }}
-            style={styles.image}
-          />
-          <Text>{collection[key].name}</Text>
+      <ScrollView contentContainerStyle={styles.scroll}>
+        <FlatList
+          data={collection}
+          numColumns={2}
+          renderItem={renderCard}
+          keyExtractor={(item, index) => index.toString()}
+        />
+      </ScrollView>
+      <Modal
+        visible={modalVisible}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            {selectedCard && (
+              <>
+                <Image
+                  source={{ uri: selectedCard.imageUrl }}
+                  resizeMode="contain"
+                  style={styles.modalImage}
+                />
+                <Button title="Remove Card" onPress={removeCard} />
+              </>
+            )}
+          </View>
         </View>
-      ))}
+      </Modal>
     </View>
   );
 };
@@ -79,16 +153,42 @@ const styles = StyleSheet.create({
     fontSize: 48,
     color: "#10717F",
     marginTop: 100,
+    textDecorationLine: "underline",
+  },
+  scroll: {
+    paddingBottom: 10,
+  },
+  imageContainer: {
+    flex: 1,
+    marginBottom: 20,
+    marginTop: 20,
+    justifyContent: "center",
+    alignItems: "center",
   },
   image: {
-    height: 350,
-    width: 250,
+    flex: 1,
+    aspectRatio: 1,
+    width: "100%",
   },
   collection: {
-    flexDirection: "grid",
     alignItems: "center",
     justifyContent: "center",
-    margin: 10,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContent: {
+    backgroundColor: "#FFF",
+    borderRadius: 10,
+    padding: 20,
+  },
+  modalImage: {
+    width: 200,
+    height: 200,
+    marginBottom: 20,
   },
 });
 

@@ -6,7 +6,6 @@ import * as Font from "expo-font";
 import { useAuthentication } from "../utils/hooks/useAuthentication";
 import { getDatabase, ref, set, push } from "firebase/database";
 import { database, auth } from "../config/firebase";
-import { v4 as uuidv4 } from "uuid";
 
 const API_KEY = "084fe2c3-a7b3-4d67-93f0-08d06f22e714"; // Replace with your actual API key
 
@@ -142,15 +141,20 @@ const SearchScreen = () => {
                       )}
                     </>
                   )}
-                <View style={{ flexDirection: "row" }}>
-                  <Button
-                    title="Close"
-                    onPress={() => setModalVisible(false)}
-                    buttonStyle={styles.closeButton}
-                  />
+                <View
+                  style={{
+                    flexDirection: "column",
+                    padding: 10,
+                  }}
+                >
                   <Button
                     title="Add to Collection"
                     onPress={() => addToCollection(card)}
+                    buttonStyle={styles.closeButton}
+                  />
+                  <Button
+                    title="Close"
+                    onPress={() => setModalVisible(false)}
                     buttonStyle={styles.closeButton}
                   />
                 </View>
@@ -189,7 +193,7 @@ const styles = StyleSheet.create({
   },
   logo: {
     width: 250,
-    height: 250,
+    height: 350,
     marginBottom: 20,
   },
   button: {
@@ -243,6 +247,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#3B4CCA", // Pokéball blue
     padding: 10,
     borderRadius: 10,
+    margin: 5,
   },
 });
 
