@@ -2,8 +2,11 @@ import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, Image, Modal, Alert } from "react-native";
 import { Input, Button } from "react-native-elements";
 import Swiper from "react-native-swiper";
-
 import * as Font from "expo-font";
+import { useAuthentication } from "../utils/hooks/useAuthentication";
+import { getDatabase, ref, set, push } from "firebase/database";
+import { database, auth } from "../config/firebase";
+import { v4 as uuidv4 } from "uuid";
 
 const API_KEY = "084fe2c3-a7b3-4d67-93f0-08d06f22e714"; // Replace with your actual API key
 
@@ -18,6 +21,21 @@ const SearchScreen = () => {
       "pokemon-font": require("../assets/fonts/pokemon-font.ttf"),
     });
     setIsFontLoaded(true);
+  };
+
+  const addToCollection = (card) => {
+    const userId = auth.currentUser.uid;
+    const collectionRef = ref(getDatabase(), `users/${userId}/collection`);
+
+    // Generate a new unique key using push
+    const newCardRef = push(collectionRef);
+
+    // Set the card details under the unique key
+    set(newCardRef, {
+      imageUrl: card.images.small,
+      name: card.name,
+      // Add any other relevant card details here
+    });
   };
 
   const searchCard = async () => {
@@ -124,12 +142,18 @@ const SearchScreen = () => {
                       )}
                     </>
                   )}
-
-                <Button
-                  title="Close"
-                  onPress={() => setModalVisible(false)}
-                  buttonStyle={styles.closeButton}
-                />
+                <View style={{ flexDirection: "row" }}>
+                  <Button
+                    title="Close"
+                    onPress={() => setModalVisible(false)}
+                    buttonStyle={styles.closeButton}
+                  />
+                  <Button
+                    title="Add to Collection"
+                    onPress={() => addToCollection(card)}
+                    buttonStyle={styles.closeButton}
+                  />
+                </View>
               </View>
             </View>
           ))}
@@ -165,7 +189,7 @@ const styles = StyleSheet.create({
   },
   logo: {
     width: 250,
-    height: 350,
+    height: 250,
     marginBottom: 20,
   },
   button: {
