@@ -33,3 +33,5 @@ The MVP version of the app provides basic functionality. Here are some potential
 • Card Trading: Introduce a secure trading platform for users to exchange cards with each other.
 
 • Card History: Keep track of a card's price history to provide insights and trends over time.
+
+![Screenshot](https://github.com/Brad-Williams-Dev/pokemonScanner/blob/main/assets/Screenshot%202023-05-14%20at%209.16.10%20AM.png?raw=true "Login Screen")
