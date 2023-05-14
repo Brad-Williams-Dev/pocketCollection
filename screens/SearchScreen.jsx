@@ -108,39 +108,41 @@ const SearchScreen = () => {
                     uri: card.images.small,
                   }}
                 />
-                {card.name && (
-                  <Text style={styles.modalTitle}>{card.name}</Text>
-                )}
-                {card.set.releaseDate && (
-                  <Text style={styles.modalText}>
-                    Year: {card.set.releaseDate}
-                  </Text>
-                )}
-                {card.set.name && (
-                  <Text style={styles.modalText}>Set: {card.set.name}</Text>
-                )}
-                {card.rarity && (
-                  <Text style={styles.modalText}>Rarity: {card.rarity}</Text>
-                )}
-                {card.tcgplayer &&
-                  card.tcgplayer.prices &&
-                  card.tcgplayer.prices.holofoil && (
-                    <>
-                      {card.tcgplayer.updatedAt && (
-                        <Text style={styles.modalText}>
-                          Updated At: {card.tcgplayer.updatedAt}
-                        </Text>
-                      )}
-                      <Text style={styles.modalText}>Prices:</Text>
-                      {Object.entries(card.tcgplayer.prices.holofoil).map(
-                        ([key, value]) => (
-                          <Text key={key} style={styles.modalText}>
-                            {key}: ${value}
-                          </Text>
-                        )
-                      )}
-                    </>
+                <View style={styles.info}>
+                  {card.name && (
+                    <Text style={styles.modalTitle}>{card.name}</Text>
                   )}
+                  {card.set.releaseDate && (
+                    <Text style={styles.modalText}>
+                      Year: {card.set.releaseDate}
+                    </Text>
+                  )}
+                  {card.set.name && (
+                    <Text style={styles.modalText}>Set: {card.set.name}</Text>
+                  )}
+                  {card.rarity && (
+                    <Text style={styles.modalText}>Rarity: {card.rarity}</Text>
+                  )}
+                  {card.tcgplayer &&
+                    card.tcgplayer.prices &&
+                    card.tcgplayer.prices.holofoil && (
+                      <>
+                        {card.tcgplayer.updatedAt && (
+                          <Text style={styles.modalText}>
+                            Updated At: {card.tcgplayer.updatedAt}
+                          </Text>
+                        )}
+                        <Text style={styles.modalText}>Prices:</Text>
+                        {Object.entries(card.tcgplayer.prices.holofoil).map(
+                          ([key, value]) => (
+                            <Text key={key} style={styles.modalText}>
+                              {key}: ${value}
+                            </Text>
+                          )
+                        )}
+                      </>
+                    )}
+                </View>
                 <View
                   style={{
                     flexDirection: "column",
@@ -192,7 +194,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
   },
   logo: {
-    width: 250,
+    width: 350,
     height: 350,
     marginBottom: 20,
   },

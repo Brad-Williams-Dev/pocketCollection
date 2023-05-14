@@ -3,7 +3,6 @@ import {
   Text,
   Image,
   StyleSheet,
-  ScrollView,
   FlatList,
   useWindowDimensions,
   Modal,
@@ -57,44 +56,58 @@ const CollectionsScreen = () => {
 
   const windowWidth = useWindowDimensions().width; // Use useWindowDimensions hook to get the window width
 
-  const renderCard = ({ item }) => (
-    <View style={styles.collection}>
-      <View style={[styles.imageContainer, { width: windowWidth / 2 - 20 }]}>
-        <TouchableOpacity
-          onPress={() => {
-            setSelectedCard(item);
-            setModalVisible(true);
-          }}
-        >
-          <Image
-            source={{ uri: item.imageUrl }}
-            resizeMode="contain"
-            style={styles.image}
-          />
-        </TouchableOpacity>
+  const renderCard = ({ item }) => {
+    const handleRemoveCard = () => {
+      setSelectedCard(item);
+      setModalVisible(true);
+    };
+
+    return (
+      <View style={styles.collection}>
+        <View style={[styles.imageContainer, { width: windowWidth / 2 - 20 }]}>
+          <TouchableOpacity onPress={handleRemoveCard}>
+            <Image
+              source={{ uri: item.imageUrl }}
+              resizeMode="contain"
+              style={styles.image}
+            />
+          </TouchableOpacity>
+        </View>
       </View>
-    </View>
-  );
+    );
+  };
 
   const removeCard = () => {
     if (selectedCard) {
       const cardId = selectedCard.id;
       const userId = auth.currentUser.uid;
+      console.log(userId, cardId);
 
-      // Remove the card from the collection state
-      setCollection((prevCollection) =>
-        prevCollection.filter((card) => card.id !== cardId)
-      );
-
-      // Remove the card from the Firebase database
+      // Create a reference to the card in the Firebase database
       const cardRef = ref(
         getDatabase(),
         `users/${userId}/collection/${cardId}`
       );
-      remove(cardRef);
 
-      // Close the modal
-      setModalVisible(false);
+      console.log("Removing card from Firebase database...");
+
+      // Remove the card from the Firebase database
+      remove(cardRef)
+        .then(() => {
+          console.log("Card successfully removed from Firebase database.");
+
+          // Remove the card from the collection state
+          setCollection((prevCollection) =>
+            prevCollection.filter((card) => card.id !== cardId)
+          );
+
+          // Close the modal
+          setModalVisible(false);
+        })
+        .catch((error) => {
+          // Handle any errors
+          console.log("Error removing card:", error);
+        });
     }
   };
 
@@ -109,14 +122,14 @@ const CollectionsScreen = () => {
       >
         Collections
       </Text>
-      <ScrollView contentContainerStyle={styles.scroll}>
+      <View style={styles.scroll}>
         <FlatList
           data={collection}
           numColumns={2}
           renderItem={renderCard}
           keyExtractor={(item, index) => index.toString()}
         />
-      </ScrollView>
+      </View>
       <Modal
         visible={modalVisible}
         animationType="slide"
@@ -156,6 +169,9 @@ const styles = StyleSheet.create({
     textDecorationLine: "underline",
   },
   scroll: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
     paddingBottom: 10,
   },
   imageContainer: {
