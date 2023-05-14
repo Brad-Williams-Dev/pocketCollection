@@ -73,7 +73,7 @@ export default function HomeScreen({ navigation }) {
                 color: "#2C413C",
               },
             ]}
-            onPress={() => navigation.navigate("Camera")}
+            onPress={() => navigation.navigate("Search")}
           />
           <Text style={styles.listText}>Search</Text>
         </View>

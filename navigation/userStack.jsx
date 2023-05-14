@@ -3,7 +3,8 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 
 import HomeScreen from "../screens/HomeScreen";
-import CameraScreen from "../screens/CameraScreen"; // renamed here
+import CameraScreen from "../screens/CameraScreen";
+import SearchScreen from "../screens/SearchScreen";
 
 const Stack = createStackNavigator();
 
@@ -23,6 +24,15 @@ export default function UserStack() {
         <Stack.Screen
           name="Camera"
           component={CameraScreen} // and here
+          options={({ navigation }) => ({
+            headerBackTitleVisible: false,
+            headerTitle: "",
+            headerTransparent: true,
+          })}
+        />
+        <Stack.Screen
+          name="Search"
+          component={SearchScreen} // and here
           options={({ navigation }) => ({
             headerBackTitleVisible: false,
             headerTitle: "",
