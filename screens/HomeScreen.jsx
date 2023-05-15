@@ -51,7 +51,7 @@ export default function HomeScreen({ navigation }) {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor="#ff0000" barStyle="light-content" />
-      <View style={styles.header}>
+      <SafeAreaView style={styles.header}>
         <Text
           style={
             isFontLoaded
@@ -61,9 +61,9 @@ export default function HomeScreen({ navigation }) {
         >
           Poke Scanner
         </Text>
-      </View>
-      <View style={styles.footer}>
-        <View style={styles.listBox}>
+      </SafeAreaView>
+      <SafeAreaView style={styles.footer}>
+        <SafeAreaView style={styles.listBox}>
           <Icon
             name="search"
             size={32}
@@ -76,8 +76,8 @@ export default function HomeScreen({ navigation }) {
             onPress={() => navigation.navigate("Search")}
           />
           <Text style={styles.listText}>Search</Text>
-        </View>
-        <View style={styles.listBox}>
+        </SafeAreaView>
+        <SafeAreaView style={styles.listBox}>
           <Icon
             name="camera"
             size={32}
@@ -90,8 +90,8 @@ export default function HomeScreen({ navigation }) {
             onPress={() => navigation.navigate("Camera")}
           />
           <Text style={styles.listText}>Camera</Text>
-        </View>
-        <View style={styles.listBox}>
+        </SafeAreaView>
+        <SafeAreaView style={styles.listBox}>
           <Icon
             name="user"
             size={32}
@@ -104,8 +104,8 @@ export default function HomeScreen({ navigation }) {
             onPress={() => navigation.navigate("Collection")}
           />
           <Text style={styles.listText}>Collection</Text>
-        </View>
-        <View style={styles.listBox}>
+        </SafeAreaView>
+        <SafeAreaView style={styles.listBox}>
           <Icon
             name="sign-out"
             size={32}
@@ -118,8 +118,8 @@ export default function HomeScreen({ navigation }) {
             onPress={handleLogout}
           />
           <Text style={styles.listText}>Logout</Text>
-        </View>
-      </View>
+        </SafeAreaView>
+      </SafeAreaView>
     </SafeAreaView>
   );
 }

@@ -7,11 +7,19 @@ import {
   useWindowDimensions,
   Modal,
   TouchableOpacity,
+  SafeAreaView,
 } from "react-native";
 import * as Font from "expo-font";
 import { Input, Button } from "react-native-elements";
 import React, { useEffect, useState } from "react";
-import { getDatabase, ref, set, onValue, remove } from "firebase/database";
+import {
+  getDatabase,
+  ref,
+  set,
+  onValue,
+  remove,
+  orderByChild,
+} from "firebase/database";
 import { database, auth } from "../config/firebase";
 
 const CollectionsScreen = () => {
@@ -30,31 +38,33 @@ const CollectionsScreen = () => {
   useEffect(() => {
     loadFont();
 
-    // Get the current user's ID
-    const userId = auth.currentUser.uid;
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        const userId = user.uid;
+        const collectionRef = ref(database, `users/${userId}/collection`);
+        const collectionListener = onValue(collectionRef, (snapshot) => {
+          const data = snapshot.val();
 
-    // Create a reference to the user's collection in the database
-    const collectionRef = ref(getDatabase(), `users/${userId}/collection`);
+          const collectionArray = data
+            ? Object.entries(data).map(([key, value]) => ({
+                ...value,
+                key,
+              }))
+            : [];
 
-    // Listen for changes to the collection in the database
-    const collectionListener = onValue(collectionRef, (snapshot) => {
-      // Get the data from the snapshot
-      const data = snapshot.val();
+          setCollection(collectionArray);
+        });
 
-      // Convert the data to an array of Pokémon cards
-      const collectionArray = data ? Object.values(data) : [];
-
-      // Set the collection state variable
-      setCollection(collectionArray);
+        return () => {
+          collectionListener();
+        };
+      }
     });
 
-    // Clean up the listener when the component is unmounted
-    return () => {
-      collectionListener();
-    };
+    return unsubscribe;
   }, []);
 
-  const windowWidth = useWindowDimensions().width; // Use useWindowDimensions hook to get the window width
+  const windowWidth = useWindowDimensions().width;
 
   const renderCard = ({ item }) => {
     const handleRemoveCard = () => {
@@ -63,8 +73,10 @@ const CollectionsScreen = () => {
     };
 
     return (
-      <View style={styles.collection}>
-        <View style={[styles.imageContainer, { width: windowWidth / 2 - 20 }]}>
+      <SafeAreaView style={styles.collection}>
+        <SafeAreaView
+          style={[styles.imageContainer, { width: windowWidth / 2 - 20 }]}
+        >
           <TouchableOpacity onPress={handleRemoveCard}>
             <Image
               source={{ uri: item.imageUrl }}
@@ -72,36 +84,25 @@ const CollectionsScreen = () => {
               style={styles.image}
             />
           </TouchableOpacity>
-        </View>
-      </View>
+        </SafeAreaView>
+      </SafeAreaView>
     );
   };
 
   const removeCard = () => {
     if (selectedCard) {
-      const cardId = selectedCard.id;
       const userId = auth.currentUser.uid;
-      console.log(userId, cardId);
-
-      // Create a reference to the card in the Firebase database
       const cardRef = ref(
         getDatabase(),
-        `users/${userId}/collection/${cardId}`
+        `users/${userId}/collection/${selectedCard.key}`
       );
-
-      console.log("Removing card from Firebase database...");
-
-      // Remove the card from the Firebase database
       remove(cardRef)
         .then(() => {
           console.log("Card successfully removed from Firebase database.");
 
-          // Remove the card from the collection state
           setCollection((prevCollection) =>
-            prevCollection.filter((card) => card.id !== cardId)
+            prevCollection.filter((card) => card.key !== selectedCard.key)
           );
-
-          // Close the modal
           setModalVisible(false);
         })
         .catch((error) => {
@@ -165,7 +166,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 48,
     color: "#10717F",
-    marginTop: 100,
+    marginTop: Platform.OS === "ios" ? 100 : 40,
     textDecorationLine: "underline",
   },
   scroll: {
@@ -197,7 +198,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalContent: {
-    backgroundColor: "#FFF",
+    backgroundColor: "#D7853F",
     borderRadius: 10,
     padding: 20,
   },

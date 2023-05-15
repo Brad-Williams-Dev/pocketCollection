@@ -1,5 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, Image, Modal, Alert } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  Modal,
+  Alert,
+  SafeAreaView,
+  TouchableOpacity,
+} from "react-native";
 import { Input, Button } from "react-native-elements";
 import Swiper from "react-native-swiper";
 import * as Font from "expo-font";
@@ -31,9 +40,9 @@ const SearchScreen = () => {
 
     // Set the card details under the unique key
     set(newCardRef, {
+      key: newCardRef.key,
       imageUrl: card.images.small,
       name: card.name,
-      // Add any other relevant card details here
     });
   };
 
@@ -60,7 +69,7 @@ const SearchScreen = () => {
   }, []);
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Text
         style={
           isFontLoaded
@@ -100,15 +109,15 @@ const SearchScreen = () => {
       >
         <Swiper showsButtons={true}>
           {card.map((card, index) => (
-            <View key={index} style={styles.centeredView}>
-              <View style={styles.modalView}>
+            <SafeAreaView key={index} style={styles.centeredView}>
+              <SafeAreaView style={styles.modalView}>
                 <Image
                   style={styles.logo}
                   source={{
                     uri: card.images.small,
                   }}
                 />
-                <View style={styles.info}>
+                <SafeAreaView style={styles.info}>
                   {card.name && (
                     <Text style={styles.modalTitle}>{card.name}</Text>
                   )}
@@ -133,39 +142,53 @@ const SearchScreen = () => {
                           </Text>
                         )}
                         <Text style={styles.modalText}>Prices:</Text>
-                        {Object.entries(card.tcgplayer.prices.holofoil).map(
-                          ([key, value]) => (
-                            <Text key={key} style={styles.modalText}>
-                              {key}: ${value}
+                        <SafeAreaView style={styles.priceTabs}>
+                          <SafeAreaView style={styles.priceCard}>
+                            <Text style={styles.priceLabel}>Low</Text>
+                            <Text style={styles.priceValue}>
+                              ${card.tcgplayer.prices.holofoil.low}
                             </Text>
-                          )
-                        )}
+                          </SafeAreaView>
+                          <SafeAreaView style={styles.priceCard}>
+                            <Text style={styles.priceLabel}>Mid</Text>
+                            <Text style={styles.priceValue}>
+                              ${card.tcgplayer.prices.holofoil.mid}
+                            </Text>
+                          </SafeAreaView>
+                          <SafeAreaView style={styles.priceCard}>
+                            <Text style={styles.priceLabel}>High</Text>
+                            <Text style={styles.priceValue}>
+                              ${card.tcgplayer.prices.holofoil.high}
+                            </Text>
+                          </SafeAreaView>
+                          <SafeAreaView style={styles.priceCard}>
+                            <Text style={styles.priceLabel}>Market</Text>
+                            <Text style={styles.priceValue}>
+                              ${card.tcgplayer.prices.holofoil.market}
+                            </Text>
+                          </SafeAreaView>
+                        </SafeAreaView>
                       </>
                     )}
-                </View>
-                <View
-                  style={{
-                    flexDirection: "column",
-                    padding: 10,
-                  }}
-                >
-                  <Button
-                    title="Add to Collection"
-                    onPress={() => addToCollection(card)}
-                    buttonStyle={styles.closeButton}
-                  />
-                  <Button
-                    title="Close"
-                    onPress={() => setModalVisible(false)}
-                    buttonStyle={styles.closeButton}
-                  />
-                </View>
-              </View>
-            </View>
+                  <SafeAreaView style={{ marginTop: 50 }}>
+                    <Button
+                      title="Add to Collection"
+                      onPress={() => addToCollection(card)}
+                      buttonStyle={styles.closeButton}
+                    />
+                    <Button
+                      title="Close"
+                      onPress={() => setModalVisible(false)}
+                      buttonStyle={styles.closeButton}
+                    />
+                  </SafeAreaView>
+                </SafeAreaView>
+              </SafeAreaView>
+            </SafeAreaView>
           ))}
         </Swiper>
       </Modal>
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -194,9 +217,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
   },
   logo: {
-    width: 350,
-    height: 350,
+    width: 250,
+    height: 250,
+    resizeMode: "contain",
     marginBottom: 20,
+    marginTop: 20,
   },
   button: {
     backgroundColor: "#10717F",
@@ -239,6 +264,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#3B4CCA", // Pokéball blue
     marginBottom: 15,
+    textAlign: "center",
   },
   modalText: {
     marginBottom: 15,
@@ -250,6 +276,40 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 10,
     margin: 5,
+  },
+  priceTabs: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    width: "100%",
+    marginVertical: 10,
+    flexWrap: "wrap",
+  },
+  priceCard: {
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 10,
+    borderRadius: 10,
+    backgroundColor: "#eee",
+    margin: 5,
+    width: "45%",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
+    elevation: 3,
+  },
+  priceLabel: {
+    fontSize: 16,
+    color: "#333",
+    marginBottom: 5,
+  },
+  priceValue: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#10717F",
   },
 });
 
