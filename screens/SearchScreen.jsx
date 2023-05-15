@@ -77,7 +77,7 @@ const SearchScreen = () => {
             : styles.title
         }
       >
-        Search for Cards
+        Search
       </Text>
       <Image
         style={styles.logo}
@@ -196,15 +196,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: "100%",
-    backgroundColor: "#D7853F",
+    backgroundColor: "#3c5aa6",
     alignItems: "center",
     justifyContent: "center",
   },
   title: {
-    fontSize: 48,
-    marginBottom: 20,
-    color: "#10717F",
-    transform: [{ rotate: "-10deg" }, { translateY: -20 }],
+    fontSize: 84,
+    color: "#ffcb05",
   },
   input: {
     height: 40,
@@ -246,7 +244,7 @@ const styles = StyleSheet.create({
   },
   modalView: {
     margin: 20,
-    backgroundColor: "#F08030", // Pokéball orange
+    backgroundColor: "#ffcb05", // Pokéball orange
     borderRadius: 20,
     padding: 35,
     alignItems: "center",
