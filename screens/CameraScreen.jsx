@@ -64,6 +64,23 @@ export default function CameraScreen() {
 
   return (
     <View style={{ flex: 1 }}>
+      <View
+        style={{ height: "100%", width: "100%", backgroundColor: "#3c5aa6" }}
+      >
+        <Text
+          style={{
+            fontSize: 48,
+            fontWeight: "bold",
+            alignItems: "center",
+            justifyContent: "center",
+            marginTop: 100,
+            color: "#ffcb05",
+            textAlign: "center",
+          }}
+        >
+          Under Construction
+        </Text>
+      </View>
       {/* <Camera
         style={{ flex: 1 }}
         type={Camera.Constants.Type.back}
