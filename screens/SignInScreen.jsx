@@ -73,7 +73,7 @@ const SignInScreen = ({ navigation }) => {
             : styles.title
         }
       >
-        Pokémon Card App
+        Pocket Collection
       </Text>
       <Image
         style={styles.logo}

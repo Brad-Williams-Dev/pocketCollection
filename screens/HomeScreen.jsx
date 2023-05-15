@@ -21,7 +21,6 @@ export default function HomeScreen({ navigation }) {
   const loadFont = async () => {
     await Font.loadAsync({
       "pokemon-font": require("../assets/fonts/pokemon-font.ttf"),
-      // Replace './assets/fonts/pokemon-font.ttf' with the actual path to your font file
     });
     setIsFontLoaded(true);
   };
@@ -41,17 +40,14 @@ export default function HomeScreen({ navigation }) {
   }, [user]);
 
   const handleLogout = () => {
-    // Sign out the user
     signOut();
-
-    // Navigate back to the SignIn screen
     navigation.navigate("SignIn");
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar backgroundColor="#ff0000" barStyle="light-content" />
-      <SafeAreaView style={styles.header}>
+      <StatusBar backgroundColor="#1A535C" barStyle="light-content" />
+      <View style={styles.header}>
         <Text
           style={
             isFontLoaded
@@ -59,67 +55,36 @@ export default function HomeScreen({ navigation }) {
               : styles.title
           }
         >
-          Poke Scanner
+          Pocket Collection
         </Text>
-      </SafeAreaView>
-      <SafeAreaView style={styles.footer}>
-        <SafeAreaView style={styles.listBox}>
-          <Icon
-            name="search"
-            size={32}
-            style={[
-              styles.icon,
-              {
-                color: "#2C413C",
-              },
-            ]}
-            onPress={() => navigation.navigate("Search")}
-          />
+      </View>
+      <View style={styles.footer}>
+        <TouchableOpacity
+          style={styles.listBox}
+          onPress={() => navigation.navigate("Search")}
+        >
+          <Icon name="search" size={32} style={styles.icon} />
           <Text style={styles.listText}>Search</Text>
-        </SafeAreaView>
-        <SafeAreaView style={styles.listBox}>
-          <Icon
-            name="camera"
-            size={32}
-            style={[
-              styles.icon,
-              {
-                color: "#2C413C",
-              },
-            ]}
-            onPress={() => navigation.navigate("Camera")}
-          />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.listBox}
+          onPress={() => navigation.navigate("Camera")}
+        >
+          <Icon name="camera" size={32} style={styles.icon} />
           <Text style={styles.listText}>Camera</Text>
-        </SafeAreaView>
-        <SafeAreaView style={styles.listBox}>
-          <Icon
-            name="user"
-            size={32}
-            style={[
-              styles.icon,
-              {
-                color: "#2C413C",
-              },
-            ]}
-            onPress={() => navigation.navigate("Collection")}
-          />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.listBox}
+          onPress={() => navigation.navigate("Collection")}
+        >
+          <Icon name="user" size={32} style={styles.icon} />
           <Text style={styles.listText}>Collection</Text>
-        </SafeAreaView>
-        <SafeAreaView style={styles.listBox}>
-          <Icon
-            name="sign-out"
-            size={32}
-            style={[
-              styles.icon,
-              {
-                color: "#2C413C",
-              },
-            ]}
-            onPress={handleLogout}
-          />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.listBox} onPress={handleLogout}>
+          <Icon name="sign-out" size={32} style={styles.icon} />
           <Text style={styles.listText}>Logout</Text>
-        </SafeAreaView>
-      </SafeAreaView>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 }
@@ -127,51 +92,47 @@ export default function HomeScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
     backgroundColor: "#D7853F",
-    paddingTop: 10,
+    height: "100%",
   },
   header: {
+    alignItems: "center",
+    padding: 30,
     backgroundColor: "#D7853F",
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  headerTitle: {
-    fontSize: 32,
-    paddingLeft: 20,
-    color: "#fff",
-  },
-  icon: {
-    margin: 10,
-  },
-  footer: {
-    flexDirection: "column",
-    justifyContent: "space-around",
-    alignItems: "center",
-    width: "100%",
-    height: "100%",
-    paddingBottom: 16, // Add bottom padding for spacing
-    padding: 60,
-  },
-  listBox: {
-    flexDirection: "row",
-    borderWidth: 5,
-    borderColor: "#10717F",
-    borderRadius: 15,
-    width: "80%",
-    height: "10%",
-    alignItems: "center",
-  },
-  listText: {
-    fontSize: 32,
-    color: "#2C413C",
-    paddingLeft: 20,
-    fontWeight: "bold",
   },
   title: {
     fontSize: 48,
-    marginTop: 20,
-    marginBottom: -50,
-    color: "#10717F",
+    color: "#F7FFF7",
+    fontWeight: "bold",
+  },
+  footer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#8D5727",
+  },
+  listBox: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: 10,
+    paddingVertical: 20,
+    paddingHorizontal: 30,
+    borderRadius: 10,
+    backgroundColor: "#10717F",
+    width: "80%",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+    elevation: 5,
+  },
+  listText: {
+    fontSize: 24,
+    color: "#F7FFF7",
+    marginLeft: 20,
+    fontWeight: "500",
+  },
+  icon: {
+    color: "#F7FFF7",
   },
 });

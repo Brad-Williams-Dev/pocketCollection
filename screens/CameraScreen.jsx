@@ -64,7 +64,7 @@ export default function CameraScreen() {
 
   return (
     <View style={{ flex: 1 }}>
-      <Camera
+      {/* <Camera
         style={{ flex: 1 }}
         type={Camera.Constants.Type.back}
         ref={cameraRef}
@@ -127,7 +127,7 @@ export default function CameraScreen() {
             />
           </View>
         </Modal>
-      )}
+      )} */}
     </View>
   );
 }
