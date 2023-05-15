@@ -34,13 +34,13 @@ The MVP version of the app provides basic functionality. Here are some potential
 
 • Card History: Keep track of a card's price history to provide insights and trends over time.
 
-#### Login Screen
-
-![Screenshot](https://github.com/Brad-Williams-Dev/pokemonScanner/blob/main/assets/8569D55A-C30C-4F06-B020-7EEE08E870D3.png?raw=true)
-
 #### Homescreen
 
 ![Screenshot](https://github.com/Brad-Williams-Dev/pokemonScanner/blob/main/assets/6F583360-26E7-4471-B3C1-9017497573B8.png?raw=true)
+
+#### Login Screen
+
+![Screenshot](https://github.com/Brad-Williams-Dev/pokemonScanner/blob/main/assets/8569D55A-C30C-4F06-B020-7EEE08E870D3.png?raw=true)
 
 #### Search result
 
