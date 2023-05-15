@@ -104,11 +104,20 @@ const SignInScreen = ({ navigation }) => {
         secureTextEntry={true}
       />
 
-      <Button
-        title="Sign In"
-        buttonStyle={styles.buttonText}
+      <TouchableOpacity
+        style={{
+          marginBottom: 10,
+          backgroundColor: "#ffcb05",
+          padding: 10,
+          alignItems: "center",
+          borderRadius: 10,
+          width: "50%",
+        }}
         onPress={signIn}
-      />
+      >
+        <Text style={{ color: "#000" }}>Sign In</Text>
+      </TouchableOpacity>
+
       <TouchableOpacity onPress={() => navigation.navigate("SignUp")}>
         <Text style={styles.signUpText}>Don't have an account? Sign Up</Text>
       </TouchableOpacity>
@@ -120,14 +129,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: "100%",
-    backgroundColor: "#D7853F",
+    backgroundColor: "#3B4CCA",
     alignItems: "center",
     justifyContent: "center",
   },
   title: {
     fontSize: 48,
     marginBottom: 20,
-    color: "#10717F",
+    color: "#ffcb05",
     transform: [{ rotate: "-10deg" }, { translateY: -20 }],
   },
   input: {
@@ -153,12 +162,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   buttonText: {
-    color: "#FFFFFF",
+    color: "#000",
     fontSize: 16,
   },
   signUpText: {
     marginTop: 20,
-    color: "#110E0B",
+    color: "#fff",
   },
 });
 
