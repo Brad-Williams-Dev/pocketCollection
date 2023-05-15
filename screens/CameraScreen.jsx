@@ -48,6 +48,22 @@ export default function CameraScreen() {
       >
         <View
           style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            borderColor: "red",
+            borderWidth: 2,
+            borderStyle: "dashed",
+            borderRadius: 1,
+            marginHorizontal: 80,
+            marginVertical: 260,
+          }}
+        />
+
+        <View
+          style={{
             flex: 1,
             flexDirection: "column",
             justifyContent: "flex-end",
