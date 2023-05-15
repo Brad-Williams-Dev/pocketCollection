@@ -121,7 +121,7 @@ const CollectionsScreen = () => {
             : styles.title
         }
       >
-        Collections
+        Collection
       </Text>
       <View style={styles.scroll}>
         <FlatList
@@ -146,7 +146,32 @@ const CollectionsScreen = () => {
                   resizeMode="contain"
                   style={styles.modalImage}
                 />
-                <Button title="Remove Card" onPress={removeCard} />
+                <View>
+                  <TouchableOpacity
+                    style={{
+                      marginBottom: 10,
+                      backgroundColor: "#ffcb05",
+                      padding: 10,
+                      alignItems: "center",
+                      borderRadius: 5,
+                    }}
+                    onPress={removeCard}
+                  >
+                    <Text style={{ color: "white" }}>Remove Card</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={{
+                      marginBottom: 10,
+                      backgroundColor: "#ffcb05",
+                      padding: 10,
+                      alignItems: "center",
+                      borderRadius: 5,
+                    }}
+                    onPress={() => setModalVisible(false)}
+                  >
+                    <Text style={{ color: "white" }}>Close</Text>
+                  </TouchableOpacity>
+                </View>
               </>
             )}
           </View>
@@ -160,12 +185,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: "100%",
-    backgroundColor: "#D7853F",
+    backgroundColor: "#3c5aa6",
     alignItems: "center",
   },
   title: {
     fontSize: 48,
-    color: "#10717F",
+    color: "#ffcb05",
     marginTop: Platform.OS === "ios" ? 100 : 40,
     textDecorationLine: "underline",
   },
@@ -186,6 +211,11 @@ const styles = StyleSheet.create({
     flex: 1,
     aspectRatio: 1,
     width: "100%",
+    shadowColor: "#ffcb05",
+    shadowOffset: { width: 0, height: 0 }, // Center the shadow under the box
+    shadowOpacity: 1, // Increase the visibility of the shadow
+    shadowRadius: 10, // Increase the blurriness of the shadow
+    elevation: 5, // This adds a drop shadow on Android and increases the "glow" effect
   },
   collection: {
     alignItems: "center",
@@ -198,7 +228,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalContent: {
-    backgroundColor: "#D7853F",
+    backgroundColor: "#3c5aa6",
     borderRadius: 10,
     padding: 20,
   },
