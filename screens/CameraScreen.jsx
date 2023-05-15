@@ -8,6 +8,7 @@ import {
   Button,
 } from "react-native";
 import { Camera } from "expo-camera";
+import * as ImageManipulator from "expo-image-manipulator";
 
 export default function CameraScreen() {
   const [hasPermission, setHasPermission] = useState(null);
@@ -26,9 +27,31 @@ export default function CameraScreen() {
     if (cameraRef.current) {
       const options = { quality: 0.5, base64: true };
       const data = await cameraRef.current.takePictureAsync(options);
-      setCapturedPhoto(data.uri);
+
+      const boxWidth = 1400;
+      const boxHeight = 1650;
+      const boxX = 300;
+      const boxY = 1300;
+
+      // Use expo-image-manipulator to crop the image
+      const manipulatedImage = await ImageManipulator.manipulateAsync(
+        data.uri,
+        [
+          {
+            crop: {
+              originX: boxX,
+              originY: boxY,
+              width: boxWidth,
+              height: boxHeight,
+            },
+          },
+        ],
+        { compress: 1, format: ImageManipulator.SaveFormat.PNG }
+      );
+
+      setCapturedPhoto(manipulatedImage.uri);
       setOpen(true);
-      console.log(data.uri);
+      console.log(manipulatedImage.uri);
     }
   };
 
