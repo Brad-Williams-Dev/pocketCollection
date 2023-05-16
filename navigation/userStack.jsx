@@ -3,7 +3,8 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 
 import HomeScreen from "../screens/HomeScreen";
-import CameraScreen from "../screens/CameraScreen";
+import ProfileScreen from "../screens/ProfileScreen";
+import StoreScreen from "../screens/StoreScreen";
 import SearchScreen from "../screens/SearchScreen";
 import CollectionsScreen from "../screens/CollectionsScreen";
 
@@ -23,8 +24,8 @@ export default function UserStack() {
           })}
         />
         <Stack.Screen
-          name="Camera"
-          component={CameraScreen}
+          name="Store"
+          component={StoreScreen}
           options={({ navigation }) => ({
             headerBackTitleVisible: false,
             headerTitle: "",
@@ -43,6 +44,15 @@ export default function UserStack() {
         <Stack.Screen
           name="Collection"
           component={CollectionsScreen}
+          options={({ navigation }) => ({
+            headerBackTitleVisible: false,
+            headerTitle: "",
+            headerTransparent: true,
+          })}
+        />
+        <Stack.Screen
+          name="Profile"
+          component={ProfileScreen}
           options={({ navigation }) => ({
             headerBackTitleVisible: false,
             headerTitle: "",

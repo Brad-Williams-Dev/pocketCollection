@@ -34,7 +34,7 @@ export default function HomeScreen({ navigation }) {
     const urls = {};
     const types = {};
 
-    for (let i = 1; i <= 4; i++) {
+    for (let i = 1; i <= 5; i++) {
       const randomId = Math.floor(Math.random() * 151) + 1; // for a random number between 1 and 151
       const response = await axios.get(
         `https://pokeapi.co/api/v2/pokemon/${randomId}`
@@ -94,21 +94,26 @@ export default function HomeScreen({ navigation }) {
 
   const menuItems = [
     {
-      name: "Search",
+      name: "Profile",
       onPress: () => navigation.navigate("Search"),
       sprite: pokemonSpriteUrls[1],
     },
     {
-      name: "Camera",
-      onPress: () => navigation.navigate("Camera"),
+      name: "Search",
+      onPress: () => navigation.navigate("Search"),
       sprite: pokemonSpriteUrls[2],
+    },
+    {
+      name: "Store",
+      onPress: () => navigation.navigate("Store"),
+      sprite: pokemonSpriteUrls[3],
     },
     {
       name: "Collection",
       onPress: () => navigation.navigate("Collection"),
-      sprite: pokemonSpriteUrls[3],
+      sprite: pokemonSpriteUrls[4],
     },
-    { name: "Logout", onPress: handleLogout, sprite: pokemonSpriteUrls[4] },
+    { name: "Logout", onPress: handleLogout, sprite: pokemonSpriteUrls[5] },
   ];
 
   return (
@@ -156,7 +161,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#3c5aa6",
   },
   title: {
-    fontSize: 45,
+    fontSize: 36,
     color: "#ffcb05",
     fontWeight: "bold",
     marginTop: 10,
@@ -177,6 +182,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: "white",
     width: "80%",
+    height: 100,
     shadowColor: "white",
     shadowOffset: { width: 0, height: 0 }, // Center the shadow under the box
     shadowOpacity: 1, // Increase the visibility of the shadow
@@ -185,14 +191,15 @@ const styles = StyleSheet.create({
   },
 
   listText: {
-    fontSize: 24,
+    fontSize: 36,
     color: "#fff",
-    marginLeft: 20,
-    fontWeight: "500",
+    marginLeft: -5,
+    fontWeight: "bold",
   },
   icon: {
     width: 100,
     height: 100,
+    marginLeft: -15,
     marginRight: 10,
   },
 });

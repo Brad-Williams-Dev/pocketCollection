@@ -10,16 +10,9 @@ import {
   SafeAreaView,
 } from "react-native";
 import * as Font from "expo-font";
-import { Input, Button } from "react-native-elements";
+
 import React, { useEffect, useState } from "react";
-import {
-  getDatabase,
-  ref,
-  set,
-  onValue,
-  remove,
-  orderByChild,
-} from "firebase/database";
+import { getDatabase, ref, onValue, remove } from "firebase/database";
 import { database, auth } from "../config/firebase";
 
 const CollectionsScreen = () => {

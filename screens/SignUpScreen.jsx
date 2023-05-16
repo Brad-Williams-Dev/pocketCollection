@@ -57,6 +57,13 @@ const SignUpScreen = ({ navigation }) => {
         value.password
       );
 
+      // Save username and initial money to Firebase Realtime Database
+      const userRef = ref(database, `users/${userCredential.user.uid}`);
+      set(userRef, {
+        username: value.user_name,
+        money: 500,
+      });
+
       // Update value object with new user properties
       setValue({
         ...value,
