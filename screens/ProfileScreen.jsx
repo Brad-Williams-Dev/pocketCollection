@@ -59,28 +59,54 @@ const ProfileScreen = () => {
       >
         Profile
       </Text>
-      <Text style={styles.userInfo}>Username: {username}</Text>
-      <Text style={styles.userInfo}>Money: ${money}</Text>
-      <Text style={styles.userInfo}>Total # of Cards: {cards}</Text>
+      <View style={styles.userInfoContainer}>
+        <Text style={styles.userInfoLabel}>Username:</Text>
+        <Text style={styles.userInfoValue}>{username}</Text>
+      </View>
+      <View style={styles.userInfoContainer}>
+        <Text style={styles.userInfoLabel}>Money:</Text>
+        <Text style={styles.userInfoValue}>${money}</Text>
+      </View>
+      <View style={styles.userInfoContainer}>
+        <Text style={styles.userInfoLabel}>Total Cards:</Text>
+        <Text style={styles.userInfoValue}>{cards}</Text>
+      </View>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    width: "100%",
+    height: "100%",
     backgroundColor: "#3c5aa6",
-    alignItems: "center",
     justifyContent: "center",
+    alignItems: "center",
   },
   title: {
     fontSize: 48,
+    fontWeight: "bold",
+    marginBottom: 20,
     color: "#ffcb05",
+    marginTop: -400,
   },
-  userInfo: {
-    fontSize: 24,
-    color: "#ffffff",
+  userInfoContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 10,
+    backgroundColor: "#ffffff",
+    borderRadius: 8,
+    padding: 20,
+    width: "80%",
+  },
+  userInfoLabel: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginRight: 10,
+    color: "#333333",
+  },
+  userInfoValue: {
+    fontSize: 16,
+    color: "#666666",
   },
 });
 

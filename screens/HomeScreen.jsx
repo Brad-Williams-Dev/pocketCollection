@@ -138,6 +138,7 @@ export default function HomeScreen({ navigation }) {
               shadowColor: getPokemonGlowColor(pokemonTypes[index + 1]),
               backgroundColor: getPokemonGlowColor(pokemonTypes[index + 1]),
             }}
+            key={index}
             onPress={() => navigation.navigate(menuItems[index])}
           >
             <Image source={{ uri: item.sprite }} style={styles.icon} />

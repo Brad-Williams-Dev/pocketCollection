@@ -20,9 +20,15 @@ import {
   update,
   set,
   push,
+  get,
 } from "firebase/database";
 import { database, auth } from "../config/firebase";
 import Swiper from "react-native-swiper";
+import {
+  handleCardSwiped,
+  fetchCollection,
+  removeCard,
+} from "../helpers/helpers";
 
 const CollectionsScreen = () => {
   const db = getDatabase();
@@ -60,15 +66,31 @@ const CollectionsScreen = () => {
     setSwiperShow(true);
   };
 
-  const handleOpenPack = (item) => {
-    if (item.unopened) {
-      // Show the option to open the pack
-      setSelectedCard(item);
-      setModalVisible(true);
-    } else {
-      // Show the card details
-      setSelectedCard(item);
-      setModalVisible(true);
+  const handleCardSwiped = async (index) => {
+    if (index >= 0 && index < cardsToShow.length) {
+      const card = cardsToShow[index];
+
+      // Check if the card is already in the collection
+      const userId = auth.currentUser.uid;
+      const collectionRef = ref(database, `users/${userId}/collection`);
+      const snapshot = await get(collectionRef);
+      const collectionData = snapshot.val();
+
+      const existingCard = Object.values(collectionData || {}).find(
+        (c) => c.name === card.name
+      );
+
+      if (!existingCard) {
+        // Add the card to the collection
+        const newCardRef = push(ref(database, `users/${userId}/collection`));
+        await set(newCardRef, {
+          key: newCardRef.key,
+          ...card,
+        });
+
+        // Refresh the collection
+        fetchCollection();
+      }
     }
   };
 
@@ -87,6 +109,48 @@ const CollectionsScreen = () => {
 
       setCollection(collectionArray);
     });
+  };
+
+  const fetchBoosterPack = async (pack) => {
+    const boosterPack = [];
+    for (let i = 0; i < pack.cards; i++) {
+      try {
+        const response = await fetch(
+          `https://api.pokemontcg.io/v2/cards?q=set.id:${pack.set}`,
+          {
+            headers: {
+              "X-Api-Key": "084fe2c3-a7b3-4d67-93f0-08d06f22e714", // replace with your API key
+            },
+          }
+        );
+        const data = await response.json();
+        if (data.data && data.data.length > 0) {
+          // Choose a random card from the response
+          const card = data.data[Math.floor(Math.random() * data.data.length)];
+          boosterPack.push({
+            imageUrl: card.images.small,
+            name: card.name,
+          });
+        } else {
+          throw new Error("No cards returned from the API.");
+        }
+      } catch (error) {
+        console.error(`Failed to fetch card: ${error}`);
+      }
+    }
+    return boosterPack;
+  };
+
+  const handleOpenPack = (item) => {
+    if (item.unopened) {
+      // Show the option to open the pack
+      setSelectedCard(item);
+      setModalVisible(true);
+    } else {
+      // Show the card details
+      setSelectedCard(item);
+      setModalVisible(true);
+    }
   };
 
   useEffect(() => {
@@ -131,7 +195,25 @@ const CollectionsScreen = () => {
         getDatabase(),
         `users/${userId}/collection/${selectedCard.key}`
       );
-      remove(cardRef)
+      const sellAmount = selectedCard.prices.normal
+        ? selectedCard.prices.normal.high
+        : selectedCard.prices.holofoil.high;
+
+      const userRef = ref(getDatabase(), `users/${userId}`);
+      get(userRef)
+        .then((snapshot) => {
+          const userData = snapshot.val();
+          const currentMoney = userData.money || 0;
+          const updatedMoney = currentMoney + sellAmount; // Add the sell amount
+
+          // Update the user's money and remove the selected card from the collection
+          return set(userRef, { ...userData, money: updatedMoney });
+        })
+        .then(() => {
+          console.log("User's money updated successfully.");
+
+          return remove(cardRef);
+        })
         .then(() => {
           console.log("Card successfully removed from Firebase database.");
 
@@ -141,8 +223,7 @@ const CollectionsScreen = () => {
           setModalVisible(false);
         })
         .catch((error) => {
-          // Handle any errors
-          console.log("Error removing card:", error);
+          console.error("Failed to update user's money or remove card:", error);
         });
     }
   };
@@ -181,6 +262,41 @@ const CollectionsScreen = () => {
                   resizeMode="contain"
                   style={styles.modalImage}
                 />
+                <Text
+                  style={{
+                    alignItems: "center",
+                    textAlign: "center",
+                    fontSize: 20,
+                    fontWeight: "bold",
+                    marginBottom: 10,
+                  }}
+                >
+                  {selectedCard.name}
+                </Text>
+                {selectedCard.prices && (
+                  <View
+                    style={{
+                      flexDirection: "column",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      marginBottom: 10,
+                      borderWidth: 1,
+                      borderColor: "#ffcb05",
+                      padding: 10,
+                      borderRadius: 5,
+                    }}
+                  >
+                    <Text>Set: {selectedCard.set}</Text>
+                    <Text>Rarity: {selectedCard.rarity}</Text>
+                    <Text>
+                      Price: $
+                      {selectedCard.prices.normal
+                        ? selectedCard.prices.normal.high
+                        : selectedCard.prices.holofoil.high}
+                    </Text>
+                  </View>
+                )}
+
                 <View>
                   {selectedCard && selectedCard.unopened && (
                     <TouchableOpacity
@@ -210,7 +326,7 @@ const CollectionsScreen = () => {
                       }}
                       onPress={removeCard}
                     >
-                      <Text style={{ color: "white" }}>Remove Card</Text>
+                      <Text style={{ color: "white" }}>Sell Card</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                       style={{
@@ -236,28 +352,14 @@ const CollectionsScreen = () => {
         <View style={{ flex: 1 }}>
           <Swiper
             loop={false}
-            onIndexChanged={async (index) => {
+            onIndexChanged={(index) => {
               if (index === cardsToShow.length - 1) {
                 // All cards have been viewed, hide the swiper
                 setTimeout(() => {
                   setSwiperShow(false);
                 }, 2000);
               }
-              if (index === cardsToShow.length) {
-                // All cards have been viewed, hide the swiper
-                setSwiperShow(false);
-              } else {
-                // Add the currently viewed card to the collection
-                const card = cardsToShow[index];
-                const newCardRef = push(ref(db, `users/${userId}/collection`));
-                await set(newCardRef, {
-                  key: newCardRef.key,
-                  ...card,
-                });
-
-                // Refresh the collection
-                fetchCollection();
-              }
+              handleCardSwiped(index);
             }}
           >
             {cardsToShow.map((card, index) => (

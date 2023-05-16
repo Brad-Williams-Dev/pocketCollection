@@ -1,7 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, Alert } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Alert,
+  ScrollView,
+  SafeAreaView,
+} from "react-native";
 import { Button } from "react-native-elements";
-import { getDatabase, ref, set, push } from "firebase/database";
+import { getDatabase, ref, set, push, get } from "firebase/database";
 import { auth } from "../config/firebase";
 import { boosterPacks } from "../helpers/helpers";
 import { TouchableOpacity, Image } from "react-native";
@@ -16,6 +23,7 @@ const StoreScreen = () => {
       cards: 10,
       imageUrl:
         "https://www.toycompany.com/components/com_virtuemart/shop_image/product/full/pkm_smbooster_pack58e42dff8713c.jpg",
+      price: "$15.00",
     },
     {
       name: "XY Evolutions",
@@ -23,6 +31,7 @@ const StoreScreen = () => {
       cards: 10,
       imageUrl:
         "https://m.media-amazon.com/images/I/61GMlh3u1zL._AC_SX466_.jpg",
+      price: "$15.00",
     },
     {
       name: "Scarlet & Violet",
@@ -30,6 +39,7 @@ const StoreScreen = () => {
       cards: 10,
       imageUrl:
         "https://www.totalcards.net/media/catalog/product/cache/7635224f4fa597d4a3e42d3638e7f61a/s/c/scarvi-bp-4.jpg",
+      price: "$15.00",
     },
     {
       name: "Evolving Skies",
@@ -37,6 +47,7 @@ const StoreScreen = () => {
       cards: 10,
       imageUrl:
         "https://m.media-amazon.com/images/I/61HfONe953L._AC_SY879_.jpg",
+      price: "$15.00",
     },
     {
       name: "Pokemon Base Set",
@@ -44,6 +55,7 @@ const StoreScreen = () => {
       cards: 11,
       imageUrl:
         "https://d1rw89lz12ur5s.cloudfront.net/photo/collectorscache/file/509177b0555211e88ca10722830d131a/1st%20blastoise%20pack.jpg",
+      price: "$4500.00",
     },
   ]);
 
@@ -79,8 +91,39 @@ const StoreScreen = () => {
   const purchasePack = async (pack) => {
     try {
       const cards = await fetchBoosterPack(pack);
-      addToCollection(pack, cards);
-      Alert.alert("Success", "Pack purchased successfully.");
+
+      const userId = auth.currentUser.uid;
+      const userRef = ref(getDatabase(), `users/${userId}`);
+      const packAmount = parseFloat(pack.price.replace("$", ""));
+
+      get(userRef)
+        .then((snapshot) => {
+          const userData = snapshot.val();
+          const currentMoney = userData.money || 0;
+
+          if (currentMoney >= packAmount) {
+            const updatedMoney = currentMoney - packAmount;
+
+            // Update the user's money in the database
+            set(userRef, { ...userData, money: updatedMoney })
+              .then(() => {
+                addToCollection(pack, cards); // Moved the addToCollection function here
+                Alert.alert("Success", "Pack purchased successfully.");
+                console.log("User's money updated successfully.");
+              })
+              .catch((error) => {
+                console.error("Failed to update user's money:", error);
+              });
+          } else {
+            Alert.alert(
+              "Insufficient Funds",
+              "You don't have enough money to purchase this pack."
+            );
+          }
+        })
+        .catch((error) => {
+          console.error("Failed to fetch user data:", error);
+        });
     } catch (error) {
       console.error(`Failed to purchase pack: ${error}`);
     }
@@ -105,6 +148,9 @@ const StoreScreen = () => {
           boosterPack.push({
             imageUrl: card.images.small,
             name: card.name,
+            set: card.set.name,
+            rarity: card.rarity,
+            prices: card.tcgplayer.prices,
           });
         } else {
           throw new Error("No cards returned from the API.");
@@ -117,55 +163,75 @@ const StoreScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Text
-        style={
-          isFontLoaded
-            ? { ...styles.title, fontFamily: "pokemon-font" }
-            : styles.title
-        }
+        style={[styles.title, isFontLoaded && { fontFamily: "pokemon-font" }]}
       >
         Store
       </Text>
-      <View style={styles.packs}>
+      <ScrollView contentContainerStyle={styles.packContainer}>
         {boosterPacks.map((pack, index) => (
-          <TouchableOpacity key={index} onPress={() => purchasePack(pack)}>
-            <Image
-              source={{ uri: pack.imageUrl }}
-              style={{ width: 100, height: 150, margin: 5, borderRadius: 10 }}
-            />
+          <TouchableOpacity
+            key={index}
+            style={styles.packItem}
+            onPress={() => purchasePack(pack)}
+          >
+            <Image source={{ uri: pack.imageUrl }} style={styles.packImage} />
+            <View style={styles.packInfo}>
+              <Text style={styles.packName}>Name: {pack.name}</Text>
+              <Text style={styles.packPrice}>Price: {pack.price}</Text>
+            </View>
           </TouchableOpacity>
         ))}
-      </View>
-    </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: "100%",
     backgroundColor: "#3c5aa6",
     alignItems: "center",
-    justifyContent: "center",
   },
-  packs: {
+  title: {
+    fontSize: 36,
+    fontWeight: "bold",
+    marginTop: 20,
+    marginBottom: 10,
+    color: "#ffcb05",
+  },
+  packContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "center",
+    paddingHorizontal: 10,
   },
-  title: {
-    fontSize: 84,
-    color: "#ffcb05",
-    marginTop: -300,
-  },
-  buttonText: {
-    color: "#FFFFFF",
-    fontSize: 16,
-    backgroundColor: "#10717F",
-    padding: 10,
-    borderRadius: 10,
+  packItem: {
+    width: "45%",
     margin: 5,
+    backgroundColor: "#9DD6EB",
+    borderRadius: 10,
+    padding: 10,
+  },
+  packImage: {
+    height: 200,
+    borderRadius: 10,
+    marginBottom: 10,
+  },
+  packInfo: {
+    flex: 1,
+  },
+  packName: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#333333",
+    marginBottom: 5,
+  },
+  packPrice: {
+    fontSize: 14,
+    color: "#666666",
+    fontWeight: "bold",
   },
 });
 
