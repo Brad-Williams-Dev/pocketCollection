@@ -20,7 +20,7 @@ The following features will be implemented in the MVP version of the Pocket Coll
 
 • Market Value Display: The app will retrieve and display the current market value for cards in your virtual collection.
 
-• Store: Users can purchase virtual packs to open.
+• Store: Users can purchase virtual packs to open or keep a sealed pack in there collection.
 
 ## Future Enhancements
 
