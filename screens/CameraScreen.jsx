@@ -8,6 +8,8 @@ import {
   Button,
 } from "react-native";
 import { Camera } from "expo-camera";
+import axios from "axios";
+
 import * as ImageManipulator from "expo-image-manipulator";
 
 export default function CameraScreen() {
@@ -64,7 +66,7 @@ export default function CameraScreen() {
 
   return (
     <View style={{ flex: 1 }}>
-      <View
+      {/* <View
         style={{ height: "100%", width: "100%", backgroundColor: "#3c5aa6" }}
       >
         <Text
@@ -80,8 +82,8 @@ export default function CameraScreen() {
         >
           Under Construction
         </Text>
-      </View>
-      {/* <Camera
+      </View> */}
+      <Camera
         style={{ flex: 1 }}
         type={Camera.Constants.Type.back}
         ref={cameraRef}
@@ -144,7 +146,7 @@ export default function CameraScreen() {
             />
           </View>
         </Modal>
-      )} */}
+      )}
     </View>
   );
 }

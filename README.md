@@ -1,47 +1,37 @@
-# Pokemon Scanner App
+# Pocket Collection
 
-This project is an application based on the Pokemon Trading Card Game that allows users to scan Pokemon cards and retrieve their current market value. Users can sign up and log in to the app to access its features.
+Welcome to Pocket Collection, a dynamic and immersive application inspired by the Pokémon Trading Card Game. This platform offers an interactive simulation of the Pokemon card market, designed to provide a thrilling and authentic experience for card trading enthusiasts.
 
-# MVP (Minimum Viable Product)
+As a user, you will embark on an exciting journey, beginning with a designated budget to purchase Pokémon card packs. The thrill continues as you unwrap these packs within the app, each card revealing itself to you as a new addition to your virtual collection.
 
-The following features will be implemented in the MVP version of the Pokemon Scanner App:
+But the excitement doesn't end there! Each card's value is dictated by real-time market trends, delivering an added layer of realism and strategic decision-making. Navigate to your collection screen to assess your cards' current market values and make crucial decisions about your deck. Will you sell or hold onto your cards? The choice is yours.
 
-• User Authentication: Users will be able to sign up and log in to the application.
+The more you engage, the richer your experience becomes. By wisely managing your collection and resources, you can accumulate wealth and advance to more expensive packs, increasing your chances of pulling rare and highly-valued cards.
 
-• Card Scanning: Users can scan a Pokemon card using their device's camera.
+Pocket Collection is more than just a game - it's a strategic challenge, a market simulator, and a collector's dream.
 
-• Market Value Display: The app will retrieve and display the current market value for the scanned card.
+## MVP (Minimum Viable Product)
 
-• Card Collection: Users can add scanned cards to their collection.
+The following features will be implemented in the MVP version of the Pocket Collection App:
 
-• Live Collection Value: The app will calculate and display the live updated value of the user's card collection based on the market values.
+• User Authentication: Users will be able to sign up and log in to the application. ✅
 
-# Future Enhancements
+• Virtual Card Collection: Opened cards will be added to your digital collection! This feature makes managing your cards easier than ever.
+
+• Market Value Display: The app will retrieve and display the current market value for cards in your virtual collection.
+
+• Store: Users can purchase virtual packs to open.
+
+## Future Enhancements
 
 The MVP version of the app provides basic functionality. Here are some potential enhancements for future iterations:
 
-• User Profiles: Allow users to create and customize their profiles.
-
-• Social Features: Enable users to connect with friends, share their collections, and trade cards.
-
-• Card Details: Provide additional information about scanned cards, such as rarity, set, and card condition.
-
-• Card Wishlist: Allow users to create and manage a wishlist of desired Pokemon cards.
-
-• Notifications: Implement notifications to alert users about price fluctuations or new card releases.
-
-• Card Trading: Introduce a secure trading platform for users to exchange cards with each other.
-
-• Card History: Keep track of a card's price history to provide insights and trends over time.
+• Users can choose to send to get there virtual cards graded, possibly increasesing the value of the card!
 
 #### Login Screen
 
 ![Screenshot](https://github.com/Brad-Williams-Dev/pokemonScanner/blob/main/assets/6F583360-26E7-4471-B3C1-9017497573B8.png?raw=true)
 
-#### HomeScreen
+<!-- #### HomeScreen
 
-![Screenshot](https://github.com/Brad-Williams-Dev/pokemonScanner/blob/main/assets/8569D55A-C30C-4F06-B020-7EEE08E870D3.png?raw=true)
-
-#### Search result
-
-![Screenshot](https://github.com/Brad-Williams-Dev/pokemonScanner/blob/main/assets/23BF4013-65E6-4A04-8B69-9B56FEEFAF11.png?raw=true)
+![Screenshot](https://github.com/Brad-Williams-Dev/pokemonScanner/blob/main/assets/8569D55A-C30C-4F06-B020-7EEE08E870D3.png?raw=true) -->
