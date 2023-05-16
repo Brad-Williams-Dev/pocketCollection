@@ -1,61 +1,94 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  Alert,
-  SafeAreaView,
-  TouchableOpacity,
-} from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import { Button } from "react-native-elements";
-import { getDatabase, ref, push } from "firebase/database";
-import { database, auth } from "../config/firebase";
+import { getDatabase, ref, set, push } from "firebase/database";
+import { auth } from "../config/firebase";
 
 const StoreScreen = () => {
   const [boosterPacks, setBoosterPacks] = useState([
-    // Add your booster packs here
-    { id: 1, name: "Booster Pack 1", price: 100, cards: 10 },
-    { id: 2, name: "Booster Pack 2", price: 200, cards: 20 },
+    {
+      name: "Sun & Moon",
+      set: "sm115",
+      cards: 10,
+      imageUrl:
+        "https://www.toycompany.com/components/com_virtuemart/shop_image/product/full/pkm_smbooster_pack58e42dff8713c.jpg",
+    },
+    {
+      name: "XY Evolutions",
+      set: "xy12",
+      cards: 10,
+      imageUrl:
+        "https://m.media-amazon.com/images/I/61GMlh3u1zL._AC_SX466_.jpg",
+    },
   ]);
 
-  const purchaseBoosterPack = (pack) => {
+  const addToCollection = async (boosterPack) => {
     const userId = auth.currentUser.uid;
     const collectionRef = ref(getDatabase(), `users/${userId}/collection`);
 
-    // Add cards to the user's collection
-    for (let i = 0; i < pack.cards; i++) {
-      const newCardRef = push(collectionRef);
+    // Generate a new unique key using push
+    const newPackRef = push(collectionRef);
 
-      // Here, you would normally add a random card from the booster pack
-      // For simplicity, let's assume we're adding a placeholder card
-      set(newCardRef, {
-        key: newCardRef.key,
-        imageUrl: "http://example.com/placeholder.png",
-        name: "Placeholder Card",
-      });
+    // Set the pack details under the unique key
+    set(newPackRef, {
+      key: newPackRef.key,
+      set: boosterPack.set,
+      name: boosterPack.name,
+      imageUrl: boosterPack.imageUrl,
+      unopened: true,
+    });
+  };
+
+  const purchasePack = async (pack) => {
+    try {
+      addToCollection(pack);
+    } catch (error) {
+      console.error(`Failed to purchase pack: ${error}`);
     }
+  };
 
-    Alert.alert("Purchase Successful!", `You've bought ${pack.name}!`);
+  const fetchBoosterPack = async (pack) => {
+    const boosterPack = [];
+    for (let i = 0; i < pack.cards; i++) {
+      try {
+        const response = await fetch(
+          `https://api.pokemontcg.io/v2/cards?q=set.id:${pack.set}`,
+          {
+            headers: {
+              "X-Api-Key": "084fe2c3-a7b3-4d67-93f0-08d06f22e714", // replace with your API key
+            },
+          }
+        );
+        const data = await response.json();
+        if (data.data && data.data.length > 0) {
+          // Choose a random card from the response
+          const card = data.data[Math.floor(Math.random() * data.data.length)];
+          boosterPack.push({
+            imageUrl: card.images.small,
+            name: card.name,
+          });
+        } else {
+          throw new Error("No cards returned from the API.");
+        }
+      } catch (error) {
+        console.error(`Failed to fetch card: ${error}`);
+      }
+    }
+    return boosterPack;
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <Text style={styles.title}>Store</Text>
-
       {boosterPacks.map((pack, index) => (
-        <View key={index} style={styles.pack}>
-          <Text style={styles.packTitle}>{pack.name}</Text>
-          <Text style={styles.packText}>Price: {pack.price}</Text>
-          <Text style={styles.packText}>Cards: {pack.cards}</Text>
-          <Button
-            title="Buy"
-            buttonStyle={styles.buttonText}
-            onPress={() => purchaseBoosterPack(pack)}
-          />
-        </View>
+        <Button
+          key={index}
+          title={`Buy ${pack.name}`}
+          buttonStyle={styles.buttonText}
+          onPress={() => purchasePack(pack)}
+        />
       ))}
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -68,29 +101,16 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   title: {
-    fontSize: 30,
+    fontSize: 84,
     color: "#ffcb05",
-    marginBottom: 20,
-  },
-  pack: {
-    width: "80%",
-    backgroundColor: "#fff",
-    padding: 20,
-    marginBottom: 20,
-    borderRadius: 10,
-  },
-  packTitle: {
-    fontSize: 22,
-    color: "#3B4CCA",
-    marginBottom: 10,
-  },
-  packText: {
-    fontSize: 16,
-    color: "#333",
-    marginBottom: 10,
   },
   buttonText: {
+    color: "#FFFFFF",
+    fontSize: 16,
     backgroundColor: "#10717F",
+    padding: 10,
+    borderRadius: 10,
+    margin: 5,
   },
 });
 

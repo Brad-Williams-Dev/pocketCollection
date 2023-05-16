@@ -7,6 +7,7 @@ import ProfileScreen from "../screens/ProfileScreen";
 import StoreScreen from "../screens/StoreScreen";
 import SearchScreen from "../screens/SearchScreen";
 import CollectionsScreen from "../screens/CollectionsScreen";
+import SignInScreen from "../screens/SignInScreen";
 
 const Stack = createStackNavigator();
 
@@ -53,6 +54,15 @@ export default function UserStack() {
         <Stack.Screen
           name="Profile"
           component={ProfileScreen}
+          options={({ navigation }) => ({
+            headerBackTitleVisible: false,
+            headerTitle: "",
+            headerTransparent: true,
+          })}
+        />
+        <Stack.Screen
+          name="Logout"
+          component={SignInScreen}
           options={({ navigation }) => ({
             headerBackTitleVisible: false,
             headerTitle: "",
