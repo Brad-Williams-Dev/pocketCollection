@@ -1,10 +1,14 @@
-import React, { useState } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, Text, StyleSheet, Alert } from "react-native";
 import { Button } from "react-native-elements";
 import { getDatabase, ref, set, push } from "firebase/database";
 import { auth } from "../config/firebase";
+import { boosterPacks } from "../helpers/helpers";
+import { TouchableOpacity, Image } from "react-native";
+import * as Font from "expo-font";
 
 const StoreScreen = () => {
+  const [isFontLoaded, setIsFontLoaded] = useState(false);
   const [boosterPacks, setBoosterPacks] = useState([
     {
       name: "Sun & Moon",
@@ -20,9 +24,41 @@ const StoreScreen = () => {
       imageUrl:
         "https://m.media-amazon.com/images/I/61GMlh3u1zL._AC_SX466_.jpg",
     },
+    {
+      name: "Scarlet & Violet",
+      set: "sv1",
+      cards: 10,
+      imageUrl:
+        "https://www.totalcards.net/media/catalog/product/cache/7635224f4fa597d4a3e42d3638e7f61a/s/c/scarvi-bp-4.jpg",
+    },
+    {
+      name: "Evolving Skies",
+      set: "swsh7",
+      cards: 10,
+      imageUrl:
+        "https://m.media-amazon.com/images/I/61HfONe953L._AC_SY879_.jpg",
+    },
+    {
+      name: "Pokemon Base Set",
+      set: "base1",
+      cards: 11,
+      imageUrl:
+        "https://d1rw89lz12ur5s.cloudfront.net/photo/collectorscache/file/509177b0555211e88ca10722830d131a/1st%20blastoise%20pack.jpg",
+    },
   ]);
 
-  const addToCollection = async (boosterPack) => {
+  const loadFont = async () => {
+    await Font.loadAsync({
+      "pokemon-font": require("../assets/fonts/pokemon-font.ttf"),
+    });
+    setIsFontLoaded(true);
+  };
+
+  useEffect(() => {
+    loadFont();
+  }, []);
+
+  const addToCollection = async (boosterPack, cards) => {
     const userId = auth.currentUser.uid;
     const collectionRef = ref(getDatabase(), `users/${userId}/collection`);
 
@@ -36,12 +72,15 @@ const StoreScreen = () => {
       name: boosterPack.name,
       imageUrl: boosterPack.imageUrl,
       unopened: true,
+      cards,
     });
   };
 
   const purchasePack = async (pack) => {
     try {
-      addToCollection(pack);
+      const cards = await fetchBoosterPack(pack);
+      addToCollection(pack, cards);
+      Alert.alert("Success", "Pack purchased successfully.");
     } catch (error) {
       console.error(`Failed to purchase pack: ${error}`);
     }
@@ -79,15 +118,25 @@ const StoreScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Store</Text>
-      {boosterPacks.map((pack, index) => (
-        <Button
-          key={index}
-          title={`Buy ${pack.name}`}
-          buttonStyle={styles.buttonText}
-          onPress={() => purchasePack(pack)}
-        />
-      ))}
+      <Text
+        style={
+          isFontLoaded
+            ? { ...styles.title, fontFamily: "pokemon-font" }
+            : styles.title
+        }
+      >
+        Store
+      </Text>
+      <View style={styles.packs}>
+        {boosterPacks.map((pack, index) => (
+          <TouchableOpacity key={index} onPress={() => purchasePack(pack)}>
+            <Image
+              source={{ uri: pack.imageUrl }}
+              style={{ width: 100, height: 150, margin: 5, borderRadius: 10 }}
+            />
+          </TouchableOpacity>
+        ))}
+      </View>
     </View>
   );
 };
@@ -100,9 +149,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  packs: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center",
+  },
   title: {
     fontSize: 84,
     color: "#ffcb05",
+    marginTop: -300,
   },
   buttonText: {
     color: "#FFFFFF",
